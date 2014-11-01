@@ -1,5 +1,7 @@
 // the Game object used by the phaser.io library
 var stateActions = { preload: preload, create: create, update: update };
+var score=0;
+var player;
 
 // Phaser parameters:
 // - game width
@@ -9,45 +11,75 @@ var stateActions = { preload: preload, create: create, update: update };
 // - actions on the game state (or null for nothing)
 var game = new Phaser.Game(700, 400, Phaser.AUTO, 'game', stateActions);
 
-var score;
-var player;
+
 
 /*
  * Loads all resources for the game and gives them names.
  */
 function preload() {
-    game.load.image("playerImg", "assets/flappy_frog.png");
+    game.load.image("PlayerImg", "assets/flappy_viking.png");
+    game.load.image("Helmet", "assets/flappy-helmet.png");
     game.load.audio("score", "assets/point.ogg");
-    game.load.image("pipe", "assets/pipe_pink.png");
 }
 
 /*
  * Initialises the game. This function is only called once.
  */
 function create() {
-    player = game.add.sprite(100, 100, "playerImg");
-    // set the background colour of the scene
-    game.stage.setBackgroundColor("#3A7ABA");
+    // alert(score); // variable check
+    var x = 20;
+    var y = 250;
+    player = game.add.sprite(x, y, "PlayerImg");
 
-    //game.input.onDown.add(clickHandler);
+    game.stage.setBackgroundColor("#CDF3FF");
+    game.add.text(20,20, "Welcome to my game", {font: "30px Arial", fill: "#FF8533"});
+    // game.add.sprite(10, 270, "PlayerImg");
 
-    //game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
-    //game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(moveLeft);
-    //game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(moveUp);
-    //game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(moveDown);
+    game.input.onDown.add(clickHandler);
+    game.add.audio("score"); // for the next event handler
+    game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(spaceHandler);
 
-    var hole = Math.floor(Math.random() * 5) + 1;
+    game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
+    game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(moveLeft);
+    game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(moveUp);
+    game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(moveDown);
 
-    for(var count = 0; count < hole; count++){
-        game.add.sprite(20, count * 50, "pipe");
-    }
-
-    for(var count = hole + 2; count < 8; count++){
-        game.add.sprite(20, count * 50, "pipe");
-    }
 
 }
 
+
+function clickHandler (event) {
+    game.add.sprite(event.x, event.y, "PlayerImg");
+    game.sound.play("score");
+}
+
+function spaceHandler() {
+    //alert("You pressed the Spacebar!");
+    game.sound.play("score");
+    game.add.sprite(random()*600, random()*400, "Helmet");
+    //score = score +1;
+    // alert(score);
+}
+
+function random() {
+    return Math.random();
+}
+
+function moveRight() {
+    player.x += 20 //player.x = player.x + 20;
+}
+
+function moveLeft() {
+    player.x -=  20;
+}
+
+function moveUp() {
+    player.y -=  20;
+}
+
+function moveDown() {
+    player.y +=  20;
+}
 /*
  * This function updates the scene. It is called for every new frame.
  */
@@ -55,27 +87,3 @@ function update() {
 
 }
 
-function clickHandler(mouse) {
-    player.x = mouse.x;
-    player.y = mouse.y;
-}
-
-function spaceHandler() {
-    game.sound.play("score");
-}
-
-function moveLeft(){
-    player.x -= 20;
-}
-
-function moveRight(){
-    player.x+=20;
-}
-
-function moveUp(){
-    player.y-=50;
-}
-
-function moveDown(){
-    player.y+=50;
-}
